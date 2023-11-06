@@ -2,13 +2,15 @@
 
 import React from "react";
 
-const AddTodoForm = () => {
+export default function AddTodoForm({ onAddTodo }) {
   const handleAddTodo = (event) => {
     event.preventDefault();
     const todoTitle = event.target[0].value;
     // console.log(todoTitle);
+    onAddTodo(todoTitle);
     event.target[0].value = "";
   };
+
   return (
     <>
       <form onSubmit={handleAddTodo}>
@@ -18,6 +20,4 @@ const AddTodoForm = () => {
       </form>
     </>
   );
-};
-
-export default AddTodoForm;
+}
