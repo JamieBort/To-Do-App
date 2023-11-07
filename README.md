@@ -2,6 +2,24 @@
 
 A to-do app created using the React library.
 
+## Directories and Files
+
+### Directories
+
+- node_modules/ -
+
+- public/ -
+
+- src/ -
+
+### Files
+
+- package-lock.json -
+
+- package.json -
+
+- README.md - this readme file.
+
 ## Branches
 
 ```
