@@ -28,4 +28,6 @@ A to-do app created using the React library.
     +-dev - the development branch
         |
         +-feature - used to build the app out.
+        |
+        +-accessibility - To add accessibility features.
 ```
