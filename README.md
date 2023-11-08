@@ -28,6 +28,8 @@ A to-do app created using the React library.
     +-dev - the development branch
         |
         +-feature - used to build the app out.
+            |
+            +-fetch - create fetch call to load Airtable items.
         |
         +-accessibility - To add accessibility features.
 ```
