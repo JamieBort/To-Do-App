@@ -1,5 +1,7 @@
 // ./src/InputWithLabel.js
 
+// A reusable input with label component.
+
 import React, { useEffect, useRef } from "react";
 
 export default function InputWithLabel({ value, onChange, children }) {

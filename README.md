@@ -2,6 +2,8 @@
 
 A to-do app created using the React library.
 
+TODO: replace Airtable.com with Google Drive.
+
 ## Directories and Files
 
 ### Directories
