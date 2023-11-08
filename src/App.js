@@ -44,7 +44,7 @@ export default function App() {
   }, []); // NOTE: Which dependencies do I need to add here? TODO: Add necessary dependencies here.
   // }, [toggleChecked, url, listId, sortField]); // ORIGINAL
 
-  // Adding a to-do item to local storage and Airtable.
+  // Adding a to-do item to local storage and Airtable table. (POST)
   const addTodo = (newTodo) => {
     const body = JSON.stringify({
       fields: { title: newTodo.title },
@@ -74,11 +74,27 @@ export default function App() {
       });
   };
 
-  // Removing a to-do item from setTodoList()
-  // TODO: modify this so that it removes the to-do item from the Airtable table as well.
+  // Remove a to-do item from local storage and Airtable table. (DELETE)
   const removeTodo = (id) => {
-    const newTodoList = todoList.filter((todo) => todo.id !== id);
-    setTodoList(newTodoList);
+    fetch(`${url}/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${process.env.REACT_APP_AIRTABLE_API_TOKEN}`,
+      },
+    })
+      .then((response) => response.json()) // NOTE: I added this.
+      .then((result) => console.log(result)) // NOTE: I added this. TODO: use this response to notify the user that the to-do item has been deleted from Airtable.
+      .then(() => {
+        // const newTodoList = todoList.filter((todo) => id !== todo.id); // TODO: delete this line.
+        const newTodoList = todoList.filter((todo) => todo.id !== id);
+        setTodoList(newTodoList);
+        setIsError(false);
+      })
+      .catch((e) => {
+        setIsError(true);
+        console.log("e:", e); // NOTE: this line is temporary. The console below didn't work. Because (?) the catch() was never tripped.
+        (console.error || console.log).call(console, e.stack || e);
+      });
   };
 
   return (
