@@ -1,8 +1,12 @@
 // ./src/TodoListItem.js
-// TODO: Clean up this file.
-import React from "react";
 
-export default function TodoListItem({ item, onRemoveTodo }) {
+// TODO: Clean up this file.
+
+import React, { useState } from "react";
+import SimpleButton from "./SimpleButton";
+
+export default function TodoListItem({ item, onRemoveTodo, onEditToDo }) {
+  const [status, setStatus] = useState(false);
   // console.log("item:", item);
   // console.log("item.fields.title:", item.fields.title);
   // console.log("item.id:", item.id);
@@ -10,14 +14,16 @@ export default function TodoListItem({ item, onRemoveTodo }) {
   return (
     <>
       <li>{item.fields.title}</li>
-      <button
-        type="button"
-        onClick={() => {
-          onRemoveTodo(item.id);
-        }}
-      >
+      <SimpleButton item={item} onClickFunction={onRemoveTodo}>
         Remove
-      </button>
+      </SimpleButton>
+      <SimpleButton item={item} toggleFunction={setStatus} onClickFunction={onEditToDo}>
+        Edit
+      </SimpleButton>
+      {/* <button type="button" onClick={() => {onRemoveTodo(item.id);}}>Remove Old</button>
+      <button type="button" onClick={() => {onEditToDo();}}>Edit Old</button> */}
+
+      {status ? <p>what is the status?</p> : <p>what is the status now?</p>}
     </>
   );
 }

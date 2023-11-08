@@ -97,13 +97,37 @@ export default function App() {
       });
   };
 
+  // //Edit data in Airtable (UPDATE)
+  const editTodoItem = (item) => {
+    console.log("editing item");
+    //   let body = JSON.stringify({
+    //     fields: {
+    //       Title: item.fields.Title,
+    //       Completed: item.fields.Completed,
+    //       ListID: listId,
+    //     },
+    //   });
+    //   fetch(`${url}/${item.id}`, {
+    //     method: "PUT",
+    //     headers: {
+    //       Authorization: `Bearer ${process.env.REACT_APP_AIRTABLE_API_KEY}`,
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: body,
+    //   })
+    //     .then(() => {
+    //       setIsError(false);
+    //     })
+    //     .catch(() => setIsError(true));
+  };
+
   return (
     <>
       <h1>Todo List</h1>
       {isError && <p>We have an error!!!!</p>}
       <p>For the future: add and delete buttons to create lists. Field to name the list.</p>
       <AddTodoForm onAddTodo={addTodo} />
-      {isLoading ? <p>Loading...</p> : <TodoList todoList={todoList} onRemoveTodo={removeTodo} />}
+      {isLoading ? <p>Loading...</p> : <TodoList todoList={todoList} onRemoveTodo={removeTodo} onEditToDo={editTodoItem} />}
       <p>For the future: when the list is empty, have it state "Your list is empty.".</p>
     </>
   );
