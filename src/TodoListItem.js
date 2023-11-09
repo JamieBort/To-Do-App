@@ -1,14 +1,11 @@
 // ./src/TodoListItem.js
 
-// TODO: Clean up this file.
-
 import React, { useState } from "react";
 // NOTE: Abandoned this SimpleButton component for now. too complicated to implement in the middle of working on other things. TODO: come back to this concept. Maybe.
 // import SimpleButton from "./SimpleButton";
 import InputWithLabel from "./InputWithLabel";
 
 export default function TodoListItem({ item, onRemoveTodo, onEditToDo }) {
-  // NOTE: Abandoned this SimpleButton component for now. too complicated to implement in the middle of working on other things. TODO: come back to this concept. Maybe.
   const [status, setStatus] = useState(false);
   const [todoTitle, setTodoTitle] = useState("");
   const handleTitleEdit = (event) => setTodoTitle(event.target.value);
@@ -19,11 +16,6 @@ export default function TodoListItem({ item, onRemoveTodo, onEditToDo }) {
     setStatus(!status);
   };
 
-  // console.log("item:", item);
-  // console.log("item.fields.title:", item.fields.title);
-  // console.log("item.id:", item.id);
-  // // console.log("onRemoveTodo:",onRemoveTodo)
-  // console.log("status:", status);
   return (
     <>
       <li>{item.fields.title}</li>
@@ -41,7 +33,7 @@ export default function TodoListItem({ item, onRemoveTodo, onEditToDo }) {
           setStatus(!status);
         }}
       >
-        Edit - opens edit field
+        Edit
       </button>
       {status ? (
         <form onSubmit={handleEditTodo}>

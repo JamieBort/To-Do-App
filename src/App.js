@@ -1,5 +1,4 @@
 // ./src/App.js
-// TODO: Clean up this file.
 
 import React, { useState, useEffect } from "react";
 import TodoList from "./TodoList";
@@ -31,7 +30,6 @@ export default function App() {
     })
       .then((response) => response.json())
       .then((result) => {
-        // console.log(result.records); // NOTE: We don't need this console.log().
         setTodoList(result.records);
         setIsLoading(false);
         setIsError(false);
@@ -42,7 +40,6 @@ export default function App() {
         (console.error || console.log).call(console, e.stack || e);
       });
   }, []); // NOTE: Which dependencies do I need to add here? TODO: Add necessary dependencies here.
-  // }, [toggleChecked, url, listId, sortField]); // ORIGINAL
 
   // Adding a to-do item to local storage and Airtable table. (POST)
   const addTodo = (newTodo) => {
@@ -62,7 +59,7 @@ export default function App() {
     fetch(url, options)
       .then((response) => response.json())
       .then((result) => {
-        console.log(result); // NOTE: the catch didn't log an error while an error showed in the result. TODO: Keep this console.log() until this is addressed.
+        console.log("That to-do item has been added to the Airtable table:", result); // NOTE: the catch didn't log an error while an error showed in the result. TODO: Keep this console.log() until this is addressed.
         setTodoList([...todoList, result]);
         setIsLoading(false);
         setIsError(false);
@@ -82,10 +79,9 @@ export default function App() {
         Authorization: `Bearer ${process.env.REACT_APP_AIRTABLE_API_TOKEN}`,
       },
     })
-      .then((response) => response.json()) // NOTE: I added this.
-      .then((result) => console.log(result)) // NOTE: I added this. TODO: use this response to notify the user that the to-do item has been deleted from Airtable.
+      .then((response) => response.json())
+      .then((result) => console.log("That to-do item has been removed/deleted from the Airtable table:", result)) // TODO: use this response to notify the user that the to-do item has been deleted from Airtable.
       .then(() => {
-        // const newTodoList = todoList.filter((todo) => id !== todo.id); // TODO: delete this line.
         const newTodoList = todoList.filter((todo) => todo.id !== id);
         setTodoList(newTodoList);
         setIsError(false);
@@ -99,18 +95,16 @@ export default function App() {
 
   // Edit a to-do item in local storage and Airtable table. (UPDATE)
   const editTodoItem = (item) => {
-    // console.log("editing item:", item);
-    // console.log("todoList:", todoList);
-
     // 1. Find and replace the title value in todoList
-    const updatedTodoListItem = todoList.find(({ id }) => id === item.id);
-    // console.log("updatedTodoListItem:", updatedTodoListItem);
-    updatedTodoListItem.fields.title = item.title; // TODO: find another way to write this line.
-    const newTodoList = todoList.map((u) => (u.id !== updatedTodoListItem.id ? u : updatedTodoListItem));
-    // console.log("newTodoList:", newTodoList);
-    // todoList.map((u) => (u.id !== updatedTodoListItem.id ? u : updatedTodoListItem));
+    const todoListItem = todoList.find(({ id }) => id === item.id);
 
-    // 3. Find and replace the title value in Airtable
+    // Update the todo item with the new title.
+    todoListItem.fields.title = item.title; // TODO: find another way to write this line.
+
+    // Create a new todo list with the updated item.
+    const newTodoList = todoList.map((u) => (u.id !== todoListItem.id ? u : todoListItem));
+
+    // 3. Update the Airtable table with the new title.
     const body = JSON.stringify({ fields: { title: item.title } });
 
     fetch(`${url}/${item.id}`, {
@@ -121,13 +115,13 @@ export default function App() {
       },
       body: body,
     })
+      .then((response) => response.json())
+      .then((result) => console.log("That to-do item has been updated in the Airtable table:", result)) // TODO: use this response to notify the user that the to-do item has been updated in Airtable.
       .then(() => {
         // 2. Update local storage with the new todo list.
-        // setTodoList(newTodoList);
         setTodoList(newTodoList);
         setIsError(false);
       })
-      // .catch(() => setIsError(true));
       .catch((e) => {
         setIsError(true);
         console.log("e:", e); // NOTE: this line is temporary. The console below didn't work. Because (?) the catch() was never tripped.
