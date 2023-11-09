@@ -31,7 +31,7 @@ TODO: replace Airtable.com with Google Drive.
         |
         +-feature - used to build the app out.
         |   |
-        |   +-fetch - create fetch call to load Airtable items.
+        |   +-1_9_an_beyond - For working on features beyond the integration of Airtable.
         |
         +-accessibility - To add accessibility features.
         |

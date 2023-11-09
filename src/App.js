@@ -1,6 +1,7 @@
 // ./src/App.js
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import TodoList from "./TodoList";
 import AddTodoForm from "./AddTodoForm";
 
@@ -130,13 +131,30 @@ export default function App() {
   };
 
   return (
-    <>
-      <h1>Todo List</h1>
-      {isError && <p>We have an error!!!!</p>}
-      <p>For the future: add and delete buttons to create lists. Field to name the list.</p>
-      <AddTodoForm onAddTodo={addTodo} />
-      {isLoading ? <p>Loading...</p> : <TodoList todoList={todoList} onRemoveTodo={removeTodo} onEditToDo={editTodoItem} />}
-      <p>For the future: when the list is empty, have it state "Your list is empty.".</p>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <>
+              <h1>Todo List</h1>
+              {isError && <p>We have an error!!!!</p>}
+              <p>For the future: add and delete buttons to create lists. Field to name the list.</p>
+              <AddTodoForm onAddTodo={addTodo} />
+              {isLoading ? <p>Loading...</p> : <TodoList todoList={todoList} onRemoveTodo={removeTodo} onEditToDo={editTodoItem} />}
+              <p>For the future: when the list is empty, have it state "Your list is empty.".</p>
+            </>
+          }
+        ></Route>
+        <Route
+          path="/test"
+          element={
+            <>
+              <h2>help</h2>
+            </>
+          }
+        ></Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
