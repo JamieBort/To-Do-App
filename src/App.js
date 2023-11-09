@@ -97,28 +97,42 @@ export default function App() {
       });
   };
 
-  // //Edit data in Airtable (UPDATE)
+  // Edit a to-do item in local storage and Airtable table. (UPDATE)
   const editTodoItem = (item) => {
-    console.log("editing item");
-    //   let body = JSON.stringify({
-    //     fields: {
-    //       Title: item.fields.Title,
-    //       Completed: item.fields.Completed,
-    //       ListID: listId,
-    //     },
-    //   });
-    //   fetch(`${url}/${item.id}`, {
-    //     method: "PUT",
-    //     headers: {
-    //       Authorization: `Bearer ${process.env.REACT_APP_AIRTABLE_API_KEY}`,
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: body,
-    //   })
-    //     .then(() => {
-    //       setIsError(false);
-    //     })
-    //     .catch(() => setIsError(true));
+    // console.log("editing item:", item);
+    // console.log("todoList:", todoList);
+
+    // 1. Find and replace the title value in todoList
+    const updatedTodoListItem = todoList.find(({ id }) => id === item.id);
+    // console.log("updatedTodoListItem:", updatedTodoListItem);
+    updatedTodoListItem.fields.title = item.title; // TODO: find another way to write this line.
+    const newTodoList = todoList.map((u) => (u.id !== updatedTodoListItem.id ? u : updatedTodoListItem));
+    // console.log("newTodoList:", newTodoList);
+    // todoList.map((u) => (u.id !== updatedTodoListItem.id ? u : updatedTodoListItem));
+
+    // 3. Find and replace the title value in Airtable
+    const body = JSON.stringify({ fields: { title: item.title } });
+
+    fetch(`${url}/${item.id}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${process.env.REACT_APP_AIRTABLE_API_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: body,
+    })
+      .then(() => {
+        // 2. Update local storage with the new todo list.
+        // setTodoList(newTodoList);
+        setTodoList(newTodoList);
+        setIsError(false);
+      })
+      // .catch(() => setIsError(true));
+      .catch((e) => {
+        setIsError(true);
+        console.log("e:", e); // NOTE: this line is temporary. The console below didn't work. Because (?) the catch() was never tripped.
+        (console.error || console.log).call(console, e.stack || e);
+      });
   };
 
   return (
