@@ -139,10 +139,9 @@ export default function App() {
             <>
               <h1>Todo List</h1>
               {isError && <p>We have an error!!!!</p>}
-              <p>For the future: add and delete buttons to create lists. Field to name the list.</p>
               <AddTodoForm onAddTodo={addTodo} />
               {isLoading ? <p>Loading...</p> : <TodoList todoList={todoList} onRemoveTodo={removeTodo} onEditToDo={editTodoItem} />}
-              <p>For the future: when the list is empty, have it state "Your list is empty.".</p>
+              {todoList.length === 0 && <p>Your list is empty!!!!</p>}
             </>
           }
         ></Route>

@@ -28,3 +28,9 @@ In no particular order:
     1. add additional field(s) to that new list,
     2. edit the name of those field(s),
     3. and deletes those fields.
+
+6.  Make this app accessible.
+
+7.  Establish a local version on my mobile.
+
+8.  Host it online for anyone to access.

@@ -16,11 +16,13 @@ TODO: replace Airtable.com with Google Drive.
 
 ### Files
 
+- ToDo.md - This file is for listing the to-do items that still need to be addressed in this repo.
+
 - package-lock.json -
 
 - package.json -
 
-- README.md - this readme file.
+- README.md - This readme file.
 
 ## Branches
 
