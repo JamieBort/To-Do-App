@@ -31,6 +31,8 @@ export default function App() {
     })
       .then((response) => response.json())
       .then((result) => {
+        console.log("result.records:", result.records);
+
         setTodoList(result.records);
         setIsLoading(false);
         setIsError(false);
@@ -40,7 +42,7 @@ export default function App() {
         setIsLoading(false);
         (console.error || console.log).call(console, e.stack || e);
       });
-  }, []); // NOTE: Which dependencies do I need to add here? TODO: Add necessary dependencies here.
+  }, [url]); // NOTE: Which dependencies do I need to add here? TODO: Add necessary dependencies here.
 
   // Adding a to-do item to local storage and Airtable table. (POST)
   const addTodo = (newTodo) => {
@@ -60,7 +62,7 @@ export default function App() {
     fetch(url, options)
       .then((response) => response.json())
       .then((result) => {
-        console.log("That to-do item has been added to the Airtable table:", result); // NOTE: the catch didn't log an error while an error showed in the result. TODO: Keep this console.log() until this is addressed.
+        // console.log("That to-do item has been added to the Airtable table:", result); // NOTE: the catch didn't log an error while an error showed in the result. TODO: Keep this console.log() until this is addressed.
         setTodoList([...todoList, result]);
         setIsLoading(false);
         setIsError(false);
@@ -130,6 +132,44 @@ export default function App() {
       });
   };
 
+  // Sorting
+  // TODO: Have each sort update the Airtable table as well. This would entail an API call with a PUT method - see the edit logic.
+
+  // TODO: Create a reusable two-button component for each of these ascending/descending pairs of buttons.
+
+  const sortAlphabeticalAscending = () => {
+    // console.log("sortng...");
+    const sorted = [...todoList].sort((a, b) =>
+      a.fields.title.toLowerCase() === b.fields.title.toLowerCase() ? 0 : a.fields.title.toLowerCase() < b.fields.title.toLowerCase() ? -1 : 1,
+    );
+    setTodoList(sorted);
+  };
+
+  const sortAlphabeticalDescending = () => {
+    // console.log("descending");
+    const sorted = [...todoList].sort((a, b) =>
+      a.fields.title.toLowerCase() === b.fields.title.toLowerCase() ? 0 : a.fields.title.toLowerCase() < b.fields.title.toLowerCase() ? 1 : -1,
+    );
+    setTodoList(sorted);
+  };
+
+  // Sort based on date created ascending
+  const sortChronologicalAscending = () => {
+    // console.log("todoList:", todoList);
+    const sorted = [...todoList].sort((a, b) => (a.createdTime === b.createdTime ? 0 : a.createdTime < b.createdTime ? -1 : 1));
+    // console.log("sorted:", sorted);
+    setTodoList(sorted);
+  };
+
+  // Sort based on date created descending
+  const sortChronologicalDescending = () => {
+    // console.log("descending");
+    // console.log("todoList:", todoList);
+    const sorted = [...todoList].sort((a, b) => (a.createdTime === b.createdTime ? 0 : a.createdTime < b.createdTime ? 1 : -1));
+    // console.log("sorted:", sorted);
+    setTodoList(sorted);
+  };
+
   return (
     <BrowserRouter>
       <Routes>
@@ -138,6 +178,18 @@ export default function App() {
           element={
             <>
               <h1>Todo List</h1>
+              <button type="button" onClick={() => sortAlphabeticalAscending()}>
+                Sort Alphabetical Ascending
+              </button>
+              <button type="button" onClick={() => sortAlphabeticalDescending()}>
+                Sort Alphabetical Descending
+              </button>
+              <button type="button" onClick={() => sortChronologicalAscending()}>
+                Sort Chronological Ascending
+              </button>
+              <button type="button" onClick={() => sortChronologicalDescending()}>
+                Sort Chronological Descending
+              </button>
               {isError && <p>We have an error!!!!</p>}
               <AddTodoForm onAddTodo={addTodo} />
               {isLoading ? <p>Loading...</p> : <TodoList todoList={todoList} onRemoveTodo={removeTodo} onEditToDo={editTodoItem} />}
@@ -146,10 +198,10 @@ export default function App() {
           }
         ></Route>
         <Route
-          path="/test"
+          path="/secondlist"
           element={
             <>
-              <h2>help</h2>
+              <h2>Welcome to my second list</h2>
             </>
           }
         ></Route>
