@@ -33,8 +33,6 @@ export default function TodoListItem({ item, onRemoveTodo, onEditToDo }) {
             >
               Remove
             </button>
-          </li>
-          <li>
             <button
               type="button"
               onClick={() => {
@@ -54,15 +52,6 @@ export default function TodoListItem({ item, onRemoveTodo, onEditToDo }) {
           </li>
         </ul>
       </li>
-
-      {/* NOTE: Abandoned this SimpleButton component for now. Too complicated to implement in the middle of working on other things. TODO: come back to this concept. Maybe. */}
-      {/* <SimpleButton item={item} onClickFunction={onRemoveTodo}>
-        Remove
-      </SimpleButton>
-      <SimpleButton item={item} onClickFunction={setStatus}>
-        Edit (next add onEditToDo)
-      </SimpleButton>
-      {status ? <p>what is the status?</p> : <p>what is the status now?</p>} */}
     </>
   );
 }

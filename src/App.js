@@ -4,6 +4,7 @@ import React, { useState, useEffect, Fragment } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import TodoList from "./TodoList";
 import AddTodoForm from "./AddTodoForm";
+import ButtonPair from "./ButtonPair";
 
 export default function App() {
   const url = `https://api.airtable.com/v0/${process.env.REACT_APP_AIRTABLE_BASE_ID}/${process.env.REACT_APP_TABLE_NAME}`;
@@ -134,8 +135,8 @@ export default function App() {
 
   // Sorting
   // TODO: Have each sort update the Airtable table as well. This would entail an API call with a PUT method - see the edit logic.
-
-  // TODO: Create a reusable two-button component for each of these ascending/descending pairs of buttons.
+  // TODO: refactor these sort functions. A lot of this logic is redundant.
+  // TODO: add feedback to user if they hit the button and the list is already sorted that way, inform the user "the list is already sorted alphabetically ascending".
 
   const sortAlphabeticalAscending = () => {
     // console.log("sortng...");
@@ -170,6 +171,12 @@ export default function App() {
     setTodoList(sorted);
   };
 
+  // Sort based on date edited descending
+  // TODO: Implement this logic.
+
+  // Sort based on date edited descending
+  // TODO: Implement this logic.
+
   return (
     <BrowserRouter>
       <Routes>
@@ -178,18 +185,13 @@ export default function App() {
           element={
             <>
               <h1>Todo List</h1>
-              <button type="button" onClick={() => sortAlphabeticalAscending()}>
-                Sort Alphabetical Ascending
-              </button>
-              <button type="button" onClick={() => sortAlphabeticalDescending()}>
-                Sort Alphabetical Descending
-              </button>
-              <button type="button" onClick={() => sortChronologicalAscending()}>
-                Sort Chronological Ascending
-              </button>
-              <button type="button" onClick={() => sortChronologicalDescending()}>
-                Sort Chronological Descending
-              </button>
+              <ButtonPair function1={sortAlphabeticalAscending} function2={sortAlphabeticalDescending} name1="Sort Alphabetical Ascending" name2="Sort Alphabetical Descending" />
+              <ButtonPair
+                function1={sortChronologicalAscending}
+                function2={sortChronologicalDescending}
+                name1="Sort Chronological Ascending"
+                name2="Sort Chronological Descending"
+              />
               {isError && <p>We have an error!!!!</p>}
               <AddTodoForm onAddTodo={addTodo} />
               {isLoading ? <p>Loading...</p> : <TodoList todoList={todoList} onRemoveTodo={removeTodo} onEditToDo={editTodoItem} />}
