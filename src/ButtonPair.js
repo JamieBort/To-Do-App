@@ -5,14 +5,14 @@
 
 import React from "react";
 
-export default function ButtonPair(props) {
+export default function ButtonPair({ function1, function2, name1, name2, ...props }) {
   return (
     <>
-      <button type="button" onClick={() => props.function1()}>
-        {props.name1}
+      <button type="button" onClick={() => function1()}>
+        {name1}
       </button>
-      <button type="button" onClick={() => props.function2()}>
-        {props.name2}
+      <button type="button" onClick={() => function2()}>
+        {name2}
       </button>
     </>
   );
