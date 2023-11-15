@@ -1,19 +1,20 @@
 // ./src/App.js
 
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import TodoList from "./TodoList";
 import AddTodoForm from "./AddTodoForm";
 import ButtonPair from "./ButtonPair";
+import { requestGetAllTodo, requestAddATodo, requestDeleteATodo } from "./APIs/Airtable_API";
 
 export default function App() {
-  const url = `https://api.airtable.com/v0/${process.env.REACT_APP_AIRTABLE_BASE_ID}/${process.env.REACT_APP_TABLE_NAME}`;
+  const url = `https://api.airtable.com/v0/${process.env.REACT_APP_AIRTABLE_BASE_ID}/${process.env.REACT_APP_TABLE_NAME}`; // TODO: remove this line
   const storageKey = "savedTodoList";
   const [todoList, setTodoList] = useState(JSON.parse(localStorage.getItem(storageKey)) ?? []);
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Saving the to-do list from Airtable into the local storage.
+  // Save the to-do list from Airtable into the local storage.
   useEffect(() => {
     try {
       if (!isLoading) localStorage.setItem(storageKey, JSON.stringify(todoList));
@@ -22,79 +23,58 @@ export default function App() {
     }
   }, [todoList, isLoading]);
 
-  // Fetch Todo list from Airtable (READ)
+  // Load list upon page load.
   useEffect(() => {
-    fetch(`${url}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${process.env.REACT_APP_AIRTABLE_API_TOKEN}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        console.log("result.records:", result.records);
+    getData();
+  }, []);
 
-        setTodoList(result.records);
-        setIsLoading(false);
-        setIsError(false);
-      })
-      .catch((e) => {
-        setIsError(true);
-        setIsLoading(false);
-        (console.error || console.log).call(console, e.stack || e);
-      });
-  }, [url]); // NOTE: Which dependencies do I need to add here? TODO: Add necessary dependencies here.
+  // Fetch Todo list from Airtable.
+  const getData = async () => {
+    try {
+      const data = await requestGetAllTodo();
+      setTodoList(data);
+      setIsLoading(false);
+      setIsError(false);
+    } catch (error) {
+      console.error("There was an error:", error);
+      throw error;
+    }
+  };
 
-  // Adding a to-do item to local storage and Airtable table. (POST)
-  const addTodo = (newTodo) => {
-    const body = JSON.stringify({
-      fields: { title: newTodo.title },
-    });
-
-    const options = {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.REACT_APP_AIRTABLE_API_TOKEN}`,
-        "Content-Type": "application/json",
-      },
-      body: body,
-    };
-
-    fetch(url, options)
-      .then((response) => response.json())
-      .then((result) => {
-        // console.log("That to-do item has been added to the Airtable table:", result); // NOTE: the catch didn't log an error while an error showed in the result. TODO: Keep this console.log() until this is addressed.
-        setTodoList([...todoList, result]);
-        setIsLoading(false);
-        setIsError(false);
-      })
-      .catch((e) => {
-        setIsError(true);
-        console.log("e:", e); // NOTE: this line is temporary. The console below didn't work. Because (?) the catch() was never tripped.
-        (console.error || console.log).call(console, e.stack || e);
-      });
+  // Add a to-do item to local storage and Airtable table.
+  const addTodo = async (newTodo) => {
+    try {
+      const data = await requestAddATodo(newTodo);
+      // console.log("data addTodo:", data);
+      // console.log("todoList:", todoList);
+      setTodoList([...todoList, data]);
+      setIsLoading(false);
+      setIsError(false);
+    } catch (error) {
+      setIsError(true);
+      console.error("There was an error:", error); // NOTE: this line is temporary. The console below didn't work. Because (?) the catch() was never tripped.
+      (console.error || console.log).call(console, error.stack || error); // TODO: study this line.
+      throw error;
+    }
   };
 
   // Remove a to-do item from local storage and Airtable table. (DELETE)
-  const removeTodo = (id) => {
-    fetch(`${url}/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${process.env.REACT_APP_AIRTABLE_API_TOKEN}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((result) => console.log("That to-do item has been removed/deleted from the Airtable table:", result)) // TODO: use this response to notify the user that the to-do item has been deleted from Airtable.
-      .then(() => {
-        const newTodoList = todoList.filter((todo) => todo.id !== id);
-        setTodoList(newTodoList);
-        setIsError(false);
-      })
-      .catch((e) => {
-        setIsError(true);
-        console.log("e:", e); // NOTE: this line is temporary. The console below didn't work. Because (?) the catch() was never tripped.
-        (console.error || console.log).call(console, e.stack || e);
-      });
+  const removeTodo = async (id) => {
+    try {
+      const data = await requestDeleteATodo(id);
+      console.log("That to-do item has been removed/deleted from the Airtable table:", data); // TODO: Use this response to notify the user that the to-do item has been deleted from Airtable.
+
+      // Update todoList:
+      const newTodoList = todoList.filter((todo) => todo.id !== id);
+      setTodoList(newTodoList);
+
+      setIsError(false);
+    } catch (error) {
+      setIsError(true);
+      console.error("There was an error:", error); // NOTE: this line is temporary. The console below didn't work. Because (?) the catch() was never tripped.
+      (console.error || console.log).call(console, error.stack || error); // TODO: study this line.
+      throw error;
+    }
   };
 
   // Edit a to-do item in local storage and Airtable table. (UPDATE)
@@ -134,6 +114,7 @@ export default function App() {
   };
 
   // Sorting
+  // NOTE: used the response to this "sort an array with react hooks" Stack Overflow post: https://stackoverflow.com/a/58087915
   // TODO: Have each sort update the Airtable table as well. This would entail an API call with a PUT method - see the edit logic.
   // TODO: refactor these sort functions. A lot of this logic is redundant.
   // TODO: add feedback to user if they hit the button and the list is already sorted that way, inform the user "the list is already sorted alphabetically ascending".
