@@ -5,10 +5,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import TodoList from "./TodoList";
 import AddTodoForm from "./AddTodoForm";
 import ButtonPair from "./ButtonPair";
-import { requestGetAllTodo, requestAddATodo, requestDeleteATodo } from "./APIs/Airtable_API";
+import { requestGetAllTodo, requestAddATodo, requestDeleteATodo, requestEditATodo } from "./APIs/Airtable_API";
 
 export default function App() {
-  const url = `https://api.airtable.com/v0/${process.env.REACT_APP_AIRTABLE_BASE_ID}/${process.env.REACT_APP_TABLE_NAME}`; // TODO: remove this line
+  // const url = `https://api.airtable.com/v0/${process.env.REACT_APP_AIRTABLE_BASE_ID}/${process.env.REACT_APP_TABLE_NAME}`; // TODO: remove this line
   const storageKey = "savedTodoList";
   const [todoList, setTodoList] = useState(JSON.parse(localStorage.getItem(storageKey)) ?? []);
   const [isError, setIsError] = useState(false);
@@ -58,7 +58,7 @@ export default function App() {
     }
   };
 
-  // Remove a to-do item from local storage and Airtable table. (DELETE)
+  // Remove a to-do item from local storage and Airtable table.
   const removeTodo = async (id) => {
     try {
       const data = await requestDeleteATodo(id);
@@ -78,39 +78,27 @@ export default function App() {
   };
 
   // Edit a to-do item in local storage and Airtable table. (UPDATE)
-  const editTodoItem = (item) => {
-    // 1. Find and replace the title value in todoList
-    const todoListItem = todoList.find(({ id }) => id === item.id);
+  const editTodoItem = async (item) => {
+    try {
+      const data = await requestEditATodo(item);
+      console.log("That to-do item has been edited/updated from the Airtable table:", data); // TODO: Use this response to notify the user that the to-do item has been edited/updated in Airtable.
 
-    // Update the todo item with the new title.
-    todoListItem.fields.title = item.title; // TODO: find another way to write this line.
+      // Find and replace the title value in todoList
+      const todoListItem = todoList.find(({ id }) => id === item.id);
 
-    // Create a new todo list with the updated item.
-    const newTodoList = todoList.map((u) => (u.id !== todoListItem.id ? u : todoListItem));
+      // Update the todo item with the new title.
+      todoListItem.fields.title = item.title; // TODO: find another way to write this line.
 
-    // 3. Update the Airtable table with the new title.
-    const body = JSON.stringify({ fields: { title: item.title } });
-
-    fetch(`${url}/${item.id}`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${process.env.REACT_APP_AIRTABLE_API_TOKEN}`,
-        "Content-Type": "application/json",
-      },
-      body: body,
-    })
-      .then((response) => response.json())
-      .then((result) => console.log("That to-do item has been updated in the Airtable table:", result)) // TODO: use this response to notify the user that the to-do item has been updated in Airtable.
-      .then(() => {
-        // 2. Update local storage with the new todo list.
-        setTodoList(newTodoList);
-        setIsError(false);
-      })
-      .catch((e) => {
-        setIsError(true);
-        console.log("e:", e); // NOTE: this line is temporary. The console below didn't work. Because (?) the catch() was never tripped.
-        (console.error || console.log).call(console, e.stack || e);
-      });
+      // Create a new todo list with the updated item.
+      const newTodoList = todoList.map((u) => (u.id !== todoListItem.id ? u : todoListItem));
+      setTodoList(newTodoList);
+      setIsError(false);
+    } catch (error) {
+      setIsError(true);
+      console.error("There was an error:", error); // NOTE: this line is temporary. The console below didn't work. Because (?) the catch() was never tripped.
+      (console.error || console.log).call(console, error.stack || error); // TODO: study this line.
+      throw error;
+    }
   };
 
   // Sorting

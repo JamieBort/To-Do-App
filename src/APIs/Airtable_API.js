@@ -1,12 +1,14 @@
 // ./src/APIs/Airtable_API.js
 
-const airtableBaseId = process.env.REACT_APP_AIRTABLE_BASE_ID;
+const airtableBaseId = process.env.REACT_APP_AIRTABLE_BASE_ID; // NOTE: not used.
 const airtableApiKey = process.env.REACT_APP_AIRTABLE_API_KEY; // NOTE: not used.
-const airtableApiToken = process.env.REACT_APP_AIRTABLE_API_TOKEN;
+const airtableApiToken = process.env.REACT_APP_AIRTABLE_API_TOKEN; // NOTE: not used.
+const airtableTableName = process.env.REACT_APP_TABLE_NAME; // NOTE: not used.
 const apiUrl = `https://api.airtable.com/v0/${process.env.REACT_APP_AIRTABLE_BASE_ID}/${process.env.REACT_APP_TABLE_NAME}`;
 
+// NOTE: when I start to use more than one table, the name of the table will need to be passed into the async functions.
+
 // API call to AirTable for all records. (GET)
-// NOTE: when I start to use more than one table, the name of the table will need to be passed into this async function
 export const requestGetAllTodo = async () => {
   try {
     const options = {
@@ -27,7 +29,6 @@ export const requestGetAllTodo = async () => {
 };
 
 // API call to AirTable to post a record. (POST)
-// NOTE: when I start to use more than one table, the name of the table will need to be passed into this async function
 export const requestAddATodo = async (newTodo) => {
   try {
     // console.log("newTodo:", newTodo);
@@ -70,6 +71,32 @@ export const requestDeleteATodo = async (id) => {
     const body = await response.json();
     // console.log("body requestAddATodo:", body);
     return body;
+  } catch (error) {
+    console.error("There was an error:", error);
+    throw error;
+  }
+};
+
+// API call to AirTable to edit a record. (PUT)
+export const requestEditATodo = async (item) => {
+  try {
+    // console.log("item:", item);
+
+    const payload = JSON.stringify({ fields: { title: item.title } });
+
+    const options = {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${process.env.REACT_APP_AIRTABLE_API_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: payload,
+    };
+
+    const response = await fetch(`${apiUrl}/${item.id}`, options);
+    console.log("response requestAddATodo:", response);
+    const body = await response.json();
+    console.log("body requestAddATodo:", body);
   } catch (error) {
     console.error("There was an error:", error);
     throw error;
