@@ -1,9 +1,8 @@
 // ./src/APIs/Airtable_API.js
 
 const airtableBaseId = process.env.REACT_APP_AIRTABLE_BASE_ID; // NOTE: not used.
-const airtableApiKey = process.env.REACT_APP_AIRTABLE_API_KEY; // NOTE: not used.
 const airtableApiToken = process.env.REACT_APP_AIRTABLE_API_TOKEN; // NOTE: not used.
-const airtableTableName = process.env.REACT_APP_TABLE_NAME; // NOTE: not used.
+const airtableTableName = process.env.REACT_APP_TABLE_NAME; // NOTE: not used (yet).
 const apiUrl = `https://api.airtable.com/v0/${process.env.REACT_APP_AIRTABLE_BASE_ID}/${process.env.REACT_APP_TABLE_NAME}`;
 
 // NOTE: when I start to use more than one table, the name of the table will need to be passed into the async functions.

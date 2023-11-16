@@ -50,6 +50,8 @@ TODO: replace Airtable.com with Google Drive.
             +-styling - For adding styling.
             |
             +-api - For moving the api logic out of the App.js file.
-                |
-                +-useEffect_api_calls - Refine the logic in the api calls.
+            |   |
+            |   +-useEffect_api_calls - Refine the logic in the api calls.
+            |
+            +-toggle_switch - Replace the `<ButtonPair/>` component with a `<ToggleSwitch/>` component.
 ```

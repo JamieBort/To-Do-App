@@ -8,7 +8,6 @@ import ButtonPair from "./ButtonPair";
 import { requestGetAllTodo, requestAddATodo, requestDeleteATodo, requestEditATodo } from "./APIs/Airtable_API";
 
 export default function App() {
-  // const url = `https://api.airtable.com/v0/${process.env.REACT_APP_AIRTABLE_BASE_ID}/${process.env.REACT_APP_TABLE_NAME}`; // TODO: remove this line
   const storageKey = "savedTodoList";
   const [todoList, setTodoList] = useState(JSON.parse(localStorage.getItem(storageKey)) ?? []);
   const [isError, setIsError] = useState(false);
