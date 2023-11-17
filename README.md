@@ -35,7 +35,11 @@ TODO: replace Airtable.com with Google Drive.
             |
             +-container_presentation - For separating the presentation from the logic.
             |
-            +-search_with_filter - For implementing a search feature along with filtering the To-Do list(s).
+            +-search - For implementing a search feature.
+            |   |
+            |   +-search_without_filter - For implementing a basic search feature without filtering the To-Do list(s).
+            |   |
+            |   +-search_with_filter - For implementing a search feature along with filtering the To-Do list(s).
             |
             +-performance - For improving performance by integrating `PropTypes` and/or `TypeScript`.
             |
