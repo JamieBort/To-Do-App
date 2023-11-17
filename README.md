@@ -48,6 +48,4 @@ TODO: replace Airtable.com with Google Drive.
             +-online - For establishing a version online.
             |
             +-styling - For adding styling.
-            |
-            +-toggle_switch - Replace the `<ButtonPair/>` component with a `<ToggleSwitch/>` component.
 ```

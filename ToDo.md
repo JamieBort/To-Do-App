@@ -8,7 +8,12 @@ In no particular order:
 
 1. Separate logic from presentation. Look into using containers.
 
-2. Add search with filtering to those list(s).
+2. Add search with filtering to those list(s). Search by
+
+   1. title
+   2. date created
+   3. And when there are other fields such as description or notes, by those too.
+   4. Etc
 
 3. Improve performance by integrating `PropTypes` and/or `TypeScript`. See [this](https://github.com/Code-the-Dream-School/react/wiki/Lesson-4.1).
 
@@ -33,3 +38,5 @@ In no particular order:
 8. Styling - add css files. See [this](https://github.com/Code-the-Dream-School/react/wiki/Lesson-3.1).
 
 9. See how she is incorporating AI. See https://github.com/Ekaterina-Bondareva/react-bald-eagle/blob/main/src/components/ChatGPT.js
+
+10. Add a "Description" and/or "Notes" field(s).

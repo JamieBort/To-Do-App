@@ -47,6 +47,10 @@ export default function TodoListItem({ item, onRemoveTodo, onEditToDo }) {
                   Edit title:
                 </InputWithLabel>{" "}
                 <button>Change</button>
+                <div>
+                  <p>Add description/notes.</p>
+                  <p>Note: This feature is not yet enabled.</p>
+                </div>
               </form>
             ) : null}
           </li>
