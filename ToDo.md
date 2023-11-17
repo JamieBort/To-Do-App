@@ -30,8 +30,6 @@ In no particular order:
 
 7. Host it online for anyone to access.
 
-8. styling - add css files. See [this](https://github.com/Code-the-Dream-School/react/wiki/Lesson-3.1).
+8. Styling - add css files. See [this](https://github.com/Code-the-Dream-School/react/wiki/Lesson-3.1).
 
-9. Replace the `<ButtonPair/>` component with a toggle switch component. See the `<ToggleSwitch/>` component.
-
-10. See how she is incorporating AI. See https://github.com/Ekaterina-Bondareva/react-bald-eagle/blob/main/src/components/ChatGPT.js
+9. See how she is incorporating AI. See https://github.com/Ekaterina-Bondareva/react-bald-eagle/blob/main/src/components/ChatGPT.js

@@ -11,6 +11,8 @@
 // const handleToggleChange = (value) => setToggleChecked(value);
 // ***********************************************************
 
+// NOTE: Currently not using this file.
+
 import React from "react";
 import ReactSwitch from "react-switch";
 

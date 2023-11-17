@@ -4,8 +4,6 @@ import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import TodoList from "./TodoList";
 import AddTodoForm from "./AddTodoForm";
-import ButtonPair from "./ButtonPair"; // TODO: Delete this line.
-// import ToggleSwitch from "./ToggleSwitch"; // TODO: Delete this line.
 import ToggleButton from "./ToggleButton";
 import { requestGetAllTodo, requestAddATodo, requestDeleteATodo, requestEditATodo } from "./APIs/Airtable_API";
 
@@ -14,10 +12,6 @@ export default function App() {
   const [todoList, setTodoList] = useState(JSON.parse(localStorage.getItem(storageKey)) ?? []);
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  // const [fourButton, setFourButton] = useState([null, null, null, null]);
-  // const [twoButtonToggle, setTwoButtonToggle] = useState([null, null]);
-  // console.log("twoButtonToggle:", twoButtonToggle);
-  // // console.log("fourButton:", fourButton);
   const [binaryStatus, setBinaryStatus] = useState(null);
 
   // Save the to-do list from Airtable into the local storage.
@@ -110,68 +104,30 @@ export default function App() {
   // Sorting
   // NOTE: used the response to this "sort an array with react hooks" Stack Overflow post: https://stackoverflow.com/a/58087915
   // TODO: Have each sort update the Airtable table as well. This would entail an API call with a PUT method - see the edit logic.
-  // TODO: refactor these sort functions. A lot of this logic is redundant.
   // TODO: add feedback to user if they hit the button and the list is already sorted that way, inform the user "the list is already sorted alphabetically ascending".
 
   const sortAlphabetical = (param) => {
-    console.log("sortAlphabetical isToggled:", !param); // TODO: Delete this line.
     let sorted;
     if (!param)
       sorted = [...todoList].sort((a, b) =>
         a.fields.title.toLowerCase() === b.fields.title.toLowerCase() ? 0 : a.fields.title.toLowerCase() < b.fields.title.toLowerCase() ? 1 : -1,
       );
-    else
+    else if (param)
       sorted = [...todoList].sort((a, b) =>
         a.fields.title.toLowerCase() === b.fields.title.toLowerCase() ? 0 : a.fields.title.toLowerCase() < b.fields.title.toLowerCase() ? -1 : 1,
       );
+    else sorted = todoList;
     setTodoList(sorted);
     setBinaryStatus(true);
   };
 
   const sortChronological = (param) => {
-    console.log("sortChronological isToggled:", !param);
     let sorted;
     if (!param) sorted = [...todoList].sort((a, b) => (a.createdTime === b.createdTime ? 0 : a.createdTime < b.createdTime ? 1 : -1));
-    else sorted = [...todoList].sort((a, b) => (a.createdTime === b.createdTime ? 0 : a.createdTime < b.createdTime ? -1 : 1));
+    else if (param) sorted = [...todoList].sort((a, b) => (a.createdTime === b.createdTime ? 0 : a.createdTime < b.createdTime ? -1 : 1));
+    else sorted = todoList;
     setTodoList(sorted);
     setBinaryStatus(false);
-  };
-
-  const sortAlphabeticalAscending = () => {
-    // console.log("sortng...");
-    const sorted = [...todoList].sort((a, b) =>
-      a.fields.title.toLowerCase() === b.fields.title.toLowerCase() ? 0 : a.fields.title.toLowerCase() < b.fields.title.toLowerCase() ? -1 : 1,
-    );
-    setTodoList(sorted);
-    // setFourButton([true, false, false, false]);
-  };
-
-  const sortAlphabeticalDescending = () => {
-    // console.log("descending");
-    const sorted = [...todoList].sort((a, b) =>
-      a.fields.title.toLowerCase() === b.fields.title.toLowerCase() ? 0 : a.fields.title.toLowerCase() < b.fields.title.toLowerCase() ? 1 : -1,
-    );
-    setTodoList(sorted);
-    // setFourButton([false, true, false, false]);
-  };
-
-  // Sort based on date created ascending
-  const sortChronologicalAscending = () => {
-    // console.log("todoList:", todoList);
-    const sorted = [...todoList].sort((a, b) => (a.createdTime === b.createdTime ? 0 : a.createdTime < b.createdTime ? -1 : 1));
-    // console.log("sorted:", sorted);
-    setTodoList(sorted);
-    // setFourButton([false, true, true, false]);
-  };
-
-  // Sort based on date created descending
-  const sortChronologicalDescending = () => {
-    // console.log("descending");
-    // console.log("todoList:", todoList);
-    const sorted = [...todoList].sort((a, b) => (a.createdTime === b.createdTime ? 0 : a.createdTime < b.createdTime ? 1 : -1));
-    // console.log("sorted:", sorted);
-    setTodoList(sorted);
-    // setFourButton([false, false, false, true]);
   };
 
   // Sort based on date edited descending
@@ -190,10 +146,10 @@ export default function App() {
               <h1>Todo List</h1>
               <div style={{ border: "gold solid 2px", padding: "3px", margin: "3px" }}>
                 {/* <ToggleButton onToggle={sortAlphabetical}>Alphabetical</ToggleButton> */}
-                <ToggleButton count="first" status={!binaryStatus} onToggle={sortAlphabetical}>
+                <ToggleButton count="first" statusBoolean={!binaryStatus} onToggle={sortAlphabetical}>
                   Alphabetical
                 </ToggleButton>
-                <ToggleButton count="second" status={binaryStatus} onToggle={sortChronological}>
+                <ToggleButton count="second" statusBoolean={binaryStatus} onToggle={sortChronological}>
                   Chronological
                 </ToggleButton>
                 {/* <ToggleButton onToggle={sortChronological}>Chronological</ToggleButton> */}
@@ -202,15 +158,6 @@ export default function App() {
               <AddTodoForm onAddTodo={addTodo} />
               {isLoading ? <p>Loading...</p> : <TodoList todoList={todoList} onRemoveTodo={removeTodo} onEditToDo={editTodoItem} />}
               {todoList.length === 0 && <p>Your list is empty!!!!</p>}
-              {/* <div style={{ border: "red solid 2px", padding: "3px", margin: "3px" }}>
-                <ButtonPair function1={sortAlphabeticalAscending} function2={sortAlphabeticalDescending} name1="Sort Alphabetical Ascending" name2="Sort Alphabetical Descending" />
-                <ButtonPair
-                  function1={sortChronologicalAscending}
-                  function2={sortChronologicalDescending}
-                  name1="Sort Chronological Ascending"
-                  name2="Sort Chronological Descending"
-                />
-              </div> */}
             </>
           }
         ></Route>
