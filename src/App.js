@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import TodoList from "./TodoList";
 import AddTodoForm from "./AddTodoForm";
 import ToggleButton from "./ToggleButton";
+import InputWithLabel from "./InputWithLabel"; // NOTE: This is to be used when the <input/> and <label> tags below are replaced with an <InputWithLabel> component
 import { requestGetAllTodo, requestAddATodo, requestDeleteATodo, requestEditATodo } from "./APIs/Airtable_API";
 
 export default function App() {
@@ -13,19 +14,32 @@ export default function App() {
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [binaryStatus, setBinaryStatus] = useState(null);
+  const [filteredList, setFilteredList] = useState(""); // NOTE: I don't think I need this.
+  // console.log(filteredList);
 
-  // Save the to-do list from Airtable into the local storage.
+  // Save the to-do list from Airtable into the local storage. And add it to the (unfiltered) filteredList.
   useEffect(() => {
     try {
-      if (!isLoading) localStorage.setItem(storageKey, JSON.stringify(todoList));
-    } catch (e) {
-      (console.error || console.log).call(console, e.stack || e);
+      if (!isLoading) {
+        localStorage.setItem(storageKey, JSON.stringify(todoList));
+        // setFilteredList(todoList); // TODO: Remove this ine of code. And update the comment above.
+      }
+    } catch (error) {
+      console.error("There was an error:", error); // NOTE: this line is temporary. The console below didn't work. Because (?) the catch() was never tripped.
+      (console.error || console.log).call(console, error.stack || error); // TODO: study this line.
+      throw error;
     }
   }, [todoList, isLoading]);
 
   // Load list upon page load.
   useEffect(() => {
-    getData();
+    try {
+      getData();
+    } catch (error) {
+      console.error("There was an error:", error); // NOTE: this line is temporary. The console below didn't work. Because (?) the catch() was never tripped.
+      (console.error || console.log).call(console, error.stack || error); // TODO: study this line.
+      throw error;
+    }
   }, []);
 
   // Fetch Todo list from Airtable.
@@ -33,10 +47,12 @@ export default function App() {
     try {
       const data = await requestGetAllTodo();
       setTodoList(data);
+      setFilteredList(data);
       setIsLoading(false);
       setIsError(false);
     } catch (error) {
-      console.error("There was an error:", error);
+      console.error("There was an error:", error); // NOTE: this line is temporary. The console below didn't work. Because (?) the catch() was never tripped.
+      (console.error || console.log).call(console, error.stack || error); // TODO: study this line.
       throw error;
     }
   };
@@ -101,6 +117,14 @@ export default function App() {
     }
   };
 
+  // Filtering
+  const handleInput = (event) => {
+    let str = "";
+    str += event.target.value.toLowerCase();
+    var result = filteredList.filter((obj) => obj.fields.title.toLowerCase() === str);
+    if (result.length > 0) setFilteredList(result);
+  };
+
   // Sorting
   // NOTE: used the response to this "sort an array with react hooks" Stack Overflow post: https://stackoverflow.com/a/58087915
   // TODO: Have each sort update the Airtable table as well. This would entail an API call with a PUT method - see the edit logic.
@@ -156,8 +180,22 @@ export default function App() {
               </div>
               {isError && <p>We have an error!!!!</p>}
               <AddTodoForm onAddTodo={addTodo} />
-              {isLoading ? <p>Loading...</p> : <TodoList todoList={todoList} onRemoveTodo={removeTodo} onEditToDo={editTodoItem} />}
-              {todoList.length === 0 && <p>Your list is empty!!!!</p>}
+
+              {/* TODO: Replace the <input/> and <label> tags below with an <InputWithLabel> component. */}
+              {todoList.length === 0 ? (
+                <p>Your list is empty!!!!</p>
+              ) : (
+                <div>
+                  <label htmlFor="searchField" name="">
+                    Search Field:
+                  </label>
+                  <input id="searchField" onChange={handleInput} />
+                </div>
+              )}
+              {isLoading ? <p>Loading...</p> : <TodoList todoList={filteredList} onRemoveTodo={removeTodo} onEditToDo={editTodoItem} />}
+              {/* NOTE: Original line of code below: */}
+              {/* TODO: Keep the original line of code until the search field is working properly. */}
+              {/* {isLoading ? <p>Loading...</p> : <TodoList todoList={todoList} onRemoveTodo={removeTodo} onEditToDo={editTodoItem} />} */}
             </>
           }
         ></Route>
