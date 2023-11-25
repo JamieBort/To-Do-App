@@ -1,6 +1,7 @@
 // ./src/ToggleButton.js
 
 // A reusable toggle button component.
+// NOTE: Used for ascending/descending sorting
 
 import React, { useState, useEffect } from "react";
 
