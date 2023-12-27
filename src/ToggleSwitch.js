@@ -3,6 +3,8 @@
 // NOTE:
 // A reusable toggle switch component.
 // Used for ascending/descending sorting.
+// Tailored after this https://css-tricks.com/different-ways-to-write-css-in-react/
+// This one might be better: https://www.youtube.com/watch?v=YZmax1g6bF4
 
 // TODO: Address this component for accessibility purposes. For example, change the <div> tags.
 
@@ -11,8 +13,8 @@ import React, { useState, useEffect } from "react";
 // TODO: Remove the children parameter.
 
 export default function ToggleSwitch({ option01 = "set option 1", option02 = "set option 2", children, onToggle, statusBoolean }) {
-  console.log("onToggle:", onToggle);
-  console.log("statusBoolean:", statusBoolean);
+  // console.log("onToggle:", onToggle);
+  // console.log("statusBoolean:", statusBoolean);
   // console.log("handleToggleChange:", handleToggleChange);
 
   // TODO: Determine which useState below to use.

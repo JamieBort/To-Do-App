@@ -11,7 +11,7 @@ export default function InputWithLabel({ value, onChange, children }) {
   return (
     <>
       <label htmlFor="todoTitle">{children}</label>
-      <input ref={inputRef} id="todoTitle" name="title" value={value} onChange={onChange}></input>
+      <input ref={inputRef} id="todoTitle" name="title" value={value} onChange={onChange} placeholder="Add a to-do item here."></input>
     </>
   );
 }

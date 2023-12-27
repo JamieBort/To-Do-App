@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import TodoList from "./TodoList";
 import AddTodoForm from "./AddTodoForm";
 import ToggleButton from "./ToggleButton";
+import ToggleSwitch from "./ToggleSwitch";
 import InputWithLabel from "./InputWithLabel"; // NOTE: This is to be used when the <input/> and <label> tags below are replaced with an <InputWithLabel> component
 import { requestGetAllTodo, requestAddATodo, requestDeleteATodo, requestEditATodo } from "./APIs/Airtable_API";
 
@@ -16,13 +17,26 @@ export default function App() {
   const [binaryStatus, setBinaryStatus] = useState(null);
   const [filteredList, setFilteredList] = useState(""); // NOTE: I don't think I need this.
   // console.log(filteredList);
+  // const [toggle, setToggle] = useState(false); // NOTE: I don't think I need this.
 
-  // Save the to-do list from Airtable into the local storage. And add it to the (unfiltered) filteredList.
   useEffect(() => {
     try {
       if (!isLoading) {
+        // Save the to-do list from Airtable into the local storage. And add it to the (unfiltered) filteredList.
         localStorage.setItem(storageKey, JSON.stringify(todoList));
-        // setFilteredList(todoList); // TODO: Remove this ine of code. And update the comment above.
+        // setFilteredList(todoList); // TODO: Remove this line of code. And update the comment above.
+
+        // Destructure todoList
+        // console.log("todoList:", todoList); // TODO: Remove this line of code.
+        const idArr = [],
+          createdTimeArr = [],
+          fieldsArr = [];
+        todoList.forEach((element) => {
+          idArr.push(element.id);
+          createdTimeArr.push(element.createdTime);
+          fieldsArr.push(element.fields);
+        });
+        console.log("Method One \n idArr:", idArr, "\n createdTimeArr:", createdTimeArr, "\n fieldsArr:", fieldsArr, "\n"); // TODO: Remove this line of code.
       }
     } catch (error) {
       console.error("There was an error:", error); // NOTE: this line is temporary. The console below didn't work. Because (?) the catch() was never tripped.
@@ -118,11 +132,23 @@ export default function App() {
   };
 
   // Filtering
-  const handleInput = (event) => {
-    let str = "";
-    str += event.target.value.toLowerCase();
-    var result = filteredList.filter((obj) => obj.fields.title.toLowerCase() === str);
-    if (result.length > 0) setFilteredList(result);
+  const handleSearchInput = (event) => {
+    console.log("event.target.value:", event.target.value);
+    console.log("todoList:", todoList);
+
+    // // One method:
+    // let str = "";
+    // str += event.target.value.toLowerCase();
+    // console.log("str:", str);
+    // var result = filteredList.filter((obj) => obj.fields.title.toLowerCase() === str);
+    // console.log("result:", result);
+    // if (result.length > 0) setFilteredList(result);
+  };
+
+  const handleToggleChange = () => {
+    console.log("handleToggleChange");
+    // setToggle(!toggle);
+    setBinaryStatus(!binaryStatus);
   };
 
   // Sorting
@@ -161,6 +187,7 @@ export default function App() {
   // TODO: Implement this logic.
 
   return (
+    // TODO: Clean up the isLoading ternary statement below.
     <BrowserRouter>
       <Routes>
         <Route
@@ -168,34 +195,75 @@ export default function App() {
           element={
             <>
               <h1>Todo List</h1>
-              <div style={{ border: "gold solid 2px", padding: "3px", margin: "3px" }}>
-                {/* <ToggleButton onToggle={sortAlphabetical}>Alphabetical</ToggleButton> */}
-                <ToggleButton count="first" statusBoolean={!binaryStatus} onToggle={sortAlphabetical}>
-                  Alphabetical
-                </ToggleButton>
-                <ToggleButton count="second" statusBoolean={binaryStatus} onToggle={sortChronological}>
-                  Chronological
-                </ToggleButton>
-                {/* <ToggleButton onToggle={sortChronological}>Chronological</ToggleButton> */}
-              </div>
+
               {isError && <p>We have an error!!!!</p>}
               <AddTodoForm onAddTodo={addTodo} />
 
               {/* TODO: Replace the <input/> and <label> tags below with an <InputWithLabel> component. */}
-              {todoList.length === 0 ? (
-                <p>Your list is empty!!!!</p>
+
+              {/* {isLoading ? (
+                <div style={{ border: "lightblue solid 2px", padding: "3px", margin: "3px" }}>
+                  <p>Loading...</p>
+                </div>
               ) : (
-                <div>
-                  <label htmlFor="searchField" name="">
-                    Search Field:
-                  </label>
-                  <input id="searchField" onChange={handleInput} />
+                <div style={{ border: "orange solid 2px", padding: "3px", margin: "3px" }}>
+                  <TodoList todoList={filteredList} onRemoveTodo={removeTodo} onEditToDo={editTodoItem} />
+                </div>
+              )} */}
+
+              {isLoading ? (
+                <div style={{ border: "lightblue solid 2px", padding: "3px", margin: "3px" }}>
+                  <p>Loading...</p>
+                </div>
+              ) : todoList.length === 0 ? (
+                <div style={{ border: "pink solid 2px", padding: "3px", margin: "3px" }}>
+                  <p>Your list is empty!!!!</p>
+                </div>
+              ) : (
+                <div style={{ border: "green solid 2px", padding: "3px", margin: "3px" }}>
+                  <div style={{ border: "gold solid 2px", padding: "3px", margin: "3px" }}>
+                    <span>Sorting: </span>
+                    <ToggleButton count="first" statusBoolean={!binaryStatus} onToggle={sortAlphabetical}>
+                      Alphabetical
+                    </ToggleButton>
+                    <ToggleButton count="second" statusBoolean={binaryStatus} onToggle={sortChronological}>
+                      Chronological
+                    </ToggleButton>
+                    <span>sort by date completed</span>
+                    <span>sort by due date</span>
+                  </div>
+                  <div style={{ border: "red solid 2px", padding: "3px", margin: "3px" }}>
+                    <span>Searching: </span>
+                    <label htmlFor="searchField" name="">
+                      Search Field:
+                    </label>
+                    <input id="searchField" onChange={handleSearchInput} placeholder="Search..." />
+
+                    <ToggleSwitch option01="Include Title" option02="Do not include title" count="third" statusBoolean={!binaryStatus} onToggle={handleToggleChange} />
+                    <ToggleSwitch
+                      option01="Include Date Created"
+                      option02="Do Not Include Date Created"
+                      count="fourth"
+                      statusBoolean={!binaryStatus}
+                      onToggle={handleToggleChange}
+                    />
+                  </div>
+                  <div style={{ border: "orange solid 2px", padding: "3px", margin: "3px" }}>
+                    <span>List</span>
+                    <div style={{ border: "yellow solid 2px", padding: "3px", margin: "3px" }}>
+                      <span>Filter ToDo List by: </span>
+                    </div>
+                    <div style={{ border: "gold solid 2px", padding: "3px", margin: "3px" }}>
+                      <span>Filtered</span>
+                      <TodoList todoList={filteredList} onRemoveTodo={removeTodo} onEditToDo={editTodoItem} />
+                    </div>
+                    <div style={{ border: "red solid 2px", padding: "3px", margin: "3px" }}>
+                      <span>Original</span>
+                      <TodoList todoList={todoList} onRemoveTodo={removeTodo} onEditToDo={editTodoItem} />
+                    </div>
+                  </div>
                 </div>
               )}
-              {isLoading ? <p>Loading...</p> : <TodoList todoList={filteredList} onRemoveTodo={removeTodo} onEditToDo={editTodoItem} />}
-              {/* NOTE: Original line of code below: */}
-              {/* TODO: Keep the original line of code until the search field is working properly. */}
-              {/* {isLoading ? <p>Loading...</p> : <TodoList todoList={todoList} onRemoveTodo={removeTodo} onEditToDo={editTodoItem} />} */}
             </>
           }
         ></Route>
@@ -203,7 +271,7 @@ export default function App() {
           path="/secondlist"
           element={
             <>
-              <h2>Welcome to my second list</h2>
+              <span>Welcome to my second list</span>
             </>
           }
         ></Route>
